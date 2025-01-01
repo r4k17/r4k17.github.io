@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Clicker Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #000000;
+            color: #fff;
+            text-align: center;
+            padding: 50px;
+        }
+
+        /* Cookie Style */
+        .cookie {
+            width: 200px;
+            height: 200px;
+            background-color: #d68a4e;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            margin: 20px auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background: radial-gradient(circle, #d68a4e 0%, #8b5e2c 60%);
+            border: 5px solid #8b5e2c;
+            display: inline-block;
+            overflow: hidden;
+            transition: transform 0.1s ease;
+        }
+
+        /* Cookie Press Animation */
+        .cookie:active {
+            transform: scale(0.95);
+            animation: crackAnimation 0.2s ease-in-out forwards;
+        }
+
+        /* Cookie Crack Animation */
+        @keyframes crackAnimation {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+                background-color: #f8d7b9;
+            }
+            100% {
+                transform: scale(1);
+                background-color: #d68a4e;
+            }
+        }
+
+        /* Chocolate Chips Style */
+        .chocolate-chip {
+            position: absolute;
+            background-color: #6b4f3f;
+            border-radius: 50%;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .chocolate-chip:nth-child(1) { width: 30px; height: 30px; top: 40px; left: 50px; }
+        .chocolate-chip:nth-child(2) { width: 25px; height: 25px; top: 70px; left: 130px; }
+        .chocolate-chip:nth-child(3) { width: 20px; height: 20px; top: 120px; left: 30px; }
+        .chocolate-chip:nth-child(4) { width: 15px; height: 15px; top: 80px; left: 100px; }
+        .chocolate-chip:nth-child(5) { width: 30px; height: 30px; top: 110px; left: 80px; }
+
+        /* Crumble Animation */
+        .crumb {
+            position: absolute;
+            background-color: #6b4f3f;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            animation: crumbleAnimation 0.8s forwards;
+        }
+
+        @keyframes crumbleAnimation {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.3);
+            }
+        }
+
+        /* Upgrade Buttons Style */
+        .upgrade {
+            background-color: #f97316;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .upgrade:hover {
+            background-color: #ea580c;
+        }
+
+        .upgrade:active {
+            transform: scale(1.1);
+            transition: all 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="text-4xl font-bold mb-5">Cookie Clicker Game</h1>
+
+    <div id="cookie" class="cookie" onclick="clickCookie()">
+        <div class="chocolate-chip"></div>
+        <div class="chocolate-chip"></div>
+        <div class="chocolate-chip"></div>
+        <div class="chocolate-chip"></div>
+        <div class="chocolate-chip"></div>
+    </div>
+
+    <div class="stats">
+        <p id="cookieCount">Cookies: 0</p>
+        <p id="cookieArmy">Cookie Army: 0</p>
+        <p id="cookieFarms">Cookie Farms: 0</p>
+        <p id="autoClicker">Auto Clicker: 0</p>
+        <p id="cookieBank">Cookie Bank Interest: 0</p>
+        <p id="prestigePoints">Prestige Points: 0</p>
+        <p id="cookieMultiplier">Cookie Multiplier: 1</p>
+        <p id="sugarRush">Sugar Rush: 0</p>
+    </div>
+
+    <div>
+        <button class="upgrade" id="cookieArmyBtn" onclick="purchaseUpgrade('cookieArmy')">Buy Cookie Army (100 Cookies)</button>
+        <button class="upgrade" id="autoClickerBtn" onclick="purchaseUpgrade('autoClicker')">Buy Auto Clicker (100 Cookies)</button>
+        <button class="upgrade" id="cookieBankBtn" onclick="purchaseUpgrade('cookieBank')">Buy Cookie Bank (500 Cookies)</button>
+        <button class="upgrade" id="prestigeBtn" onclick="purchaseUpgrade('prestige')">Buy Prestige (1000 Cookies)</button>
+        <button class="upgrade" id="cookieFarmsBtn" onclick="purchaseUpgrade('cookieFarms')">Buy Cookie Farms (2000 Cookies)</button>
+        <button class="upgrade" id="cookieMultiplierBtn" onclick="purchaseUpgrade('cookieMultiplier')">Buy Cookie Multiplier (5000 Cookies)</button>
+        <button class="upgrade" id="sugarRushBtn" onclick="purchaseUpgrade('sugarRush')">Buy Sugar Rush (1500 Cookies)</button>
+        <button class="upgrade" id="cookieMachineBtn" onclick="purchaseUpgrade('cookieMachine')">Buy Cookie Machine (3000 Cookies)</button>
+        <button class="upgrade" id="goldenCookieBtn" onclick="purchaseUpgrade('goldenCookie')">Buy Golden Cookie (5000 Cookies)</button>
+        <button class="upgrade" id="cookieGeneratorBtn" onclick="purchaseUpgrade('cookieGenerator')">Buy Cookie Generator (7000 Cookies)</button>
+        <button class="upgrade" id="cookieFactoryBtn" onclick="purchaseUpgrade('cookieFactory')">Buy Cookie Factory (10000 Cookies)</button>
+    </div>
+
+    <script>
+        let cookies = 0;
+        let cookieArmy = 0;
+        let cookieFarms = 0;
+        let autoClicker = 0;
+        let cookieBank = 0;
+        let prestigePoints = 0;
+        let cookieMultiplier = 1;
+        let cookieGenerationRate = 1;
+        let sugarRush = 0;
+        let cookieMachine = 0;
+        let goldenCookie = 0;
+        let cookieGenerator = 0;
+        let cookieFactory = 0;
+
+        const upgradeCosts = {
+            cookieArmy: 100,
+            autoClicker: 100,
+            cookieBank: 500,
+            prestige: 1000,
+            cookieFarms: 2000,
+            cookieMultiplier: 5000,
+            sugarRush: 1500,
+            cookieMachine: 3000,
+            goldenCookie: 5000,
+            cookieGenerator: 7000,
+            cookieFactory: 10000
+        };
+
+        // Function to handle cookie click
+        function clickCookie() {
+            cookies += cookieMultiplier;
+            cookies = Math.round(cookies);  // Round the cookie count to nearest whole number
+            createCrumbles();  // Create crumbles
+            updateStats();
+        }
+
+        // Function to create crumble effects
+        function createCrumbles() {
+            const cookie = document.getElementById("cookie");
+            for (let i = 0; i < 10; i++) {
+                let crumble = document.createElement('div');
+                crumble.classList.add('crumb');
+                // Random positions for crumbles
+                crumble.style.left = `${Math.random() * 100}%`;
+                crumble.style.top = `${Math.random() * 100}%`;
+                cookie.appendChild(crumble);
+
+                // Remove the crumbles after animation ends
+                setTimeout(() => {
+                    crumble.remove();
+                }, 800);
+            }
+        }
+
+        // Function to purchase upgrades
+        function purchaseUpgrade(upgradeType) {
+            if (cookies >= upgradeCosts[upgradeType]) {
+                cookies -= upgradeCosts[upgradeType];
+                applyUpgrade(upgradeType);
+                updateStats();
+            }
+        }
+
+        // Apply the purchased upgrade
+        function applyUpgrade(upgradeType) {
+            if (upgradeType === 'cookieArmy') {
+                cookieArmy++;
+                cookieMultiplier += 0.5;
+            } else if (upgradeType === 'autoClicker') {
+                autoClicker++;
+                cookieGenerationRate += 0.2;
+            } else if (upgradeType === 'cookieBank') {
+                cookieBank++;
+                cookieMultiplier += 0.5;
+            } else if (upgradeType === 'prestige') {
+                prestigePoints++;
+                cookieMultiplier += 0.6;
+            } else if (upgradeType === 'cookieFarms') {
+                cookieFarms++;
+                cookieMultiplier += 0.7;
+            } else if (upgradeType === 'cookieMultiplier') {
+                cookieMultiplier += 1;
+            } else if (upgradeType === 'sugarRush') {
+                sugarRush++;
+                setTimeout(() => { sugarRush = 0; updateStats(); }, 30000);  // Reset after 30s
+            } else if (upgradeType === 'cookieMachine') {
+                cookieMachine++;
+                cookieGenerationRate += 0.9;
+            } else if (upgradeType === 'goldenCookie') {
+                goldenCookie++;
+                cookies += 500;
+            } else if (upgradeType === 'cookieGenerator') {
+                cookieGenerator++;
+                cookieGenerationRate += 1.5;
+            } else if (upgradeType === 'cookieFactory') {
+                cookieFactory++;
+                cookieGenerationRate += 3;
+            }
+        }
+
+        // Function to update the stats display
+        function updateStats() {
+            document.getElementById("cookieCount").innerText = `Cookies: ${cookies}`;
+            document.getElementById("cookieArmy").innerText = `Cookie Army: ${cookieArmy}`;
+            document.getElementById("cookieFarms").innerText = `Cookie Farms: ${cookieFarms}`;
+            document.getElementById("autoClicker").innerText = `Auto Clicker: ${autoClicker}`;
+            document.getElementById("cookieBank").innerText = `Cookie Bank Interest: ${cookieBank}`;
+            document.getElementById("prestigePoints").innerText = `Prestige Points: ${prestigePoints}`;
+            document.getElementById("cookieMultiplier").innerText = `Cookie Multiplier: ${cookieMultiplier}`;
+            document.getElementById("sugarRush").innerText = `Sugar Rush: ${sugarRush}`;
+        }
+
+        // Auto clickers
+        setInterval(() => {
+            cookies += autoClicker * cookieGenerationRate;
+            cookies = Math.round(cookies);
+            updateStats();
+        }, 1000);
+    </script>
+</body>
+</html>
